@@ -1,0 +1,16 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "truffle compile",
+    "start": "node src/index.js"
+  },
+  "author": "Cian Montgomery",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "ethers": "^4.0.46",
+    "truffle": "^5.1.20"
+  }
+}

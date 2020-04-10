@@ -1,0 +1,66 @@
+version: '3'
+services:
+  ganache:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - "4100:4100"
+    expose:
+      - 4100
+    command:
+      - --defaultBalanceEther=100
+      - --gasPrice=0
+      - --port=4100
+
+  geth:
+    image: ethereum/client-go
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./docker/geth:/data
+    expose:
+      - 4200
+    command:
+      - --dev
+      - --dev.period=0
+      - --rpc
+      - --rpcaddr=0.0.0.0
+      - --rpcport=4200
+      - --rpccorsdomain=*
+      - --rpcvhosts=*
+      - --rpcapi=eth
+      - --gasprice=0
+
+
+  besu:
+    image: hyperledger/besu:latest
+    ports:
+      - "4300:4300"
+    expose:
+      - 4300
+    command:
+    - --network=dev
+    - --miner-enabled
+    - --miner-coinbase=0xfe3b557e8fb62b89f4916b721be55ceb828dbd73
+    - --rpc-http-cors-origins=all
+    - --host-whitelist=*
+    - --rpc-http-enabled=true
+    - --rpc-http-host=0.0.0.0
+    - --rpc-http-port=4300
+    - --min-gas-price=0
+
+  test:
+    image: node:12-buster
+    depends_on:
+      - besu
+      - ganache
+      - geth
+    volumes:
+      - ./client:/project
+      - build:/project/build
+      - node_modules:/project/node_modules
+    working_dir: /project
+    command: "./entry.sh"
+
+volumes:
+  node_modules:
+  build:
